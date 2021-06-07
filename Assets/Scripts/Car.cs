@@ -5,56 +5,33 @@ using UnityEngine;
 public class Car : MonoBehaviour
 {
     public Transform centerOfMass;
-
-    public WheelCollider wheelColLeftFront;
-    public WheelCollider wheelColRightFront;
-    public WheelCollider wheelColLeftBack;
-    public WheelCollider wheelColRightBack;
-
-    public Transform wheelLeftFront;
-    public Transform wheelRightFront;
-    public Transform wheelLeftBack;
-    public Transform wheelRightBack;
-
     public float motorTorque = 100f;
     public float maxSteer = 20f;
+
+    public float Steer { get; set; }
+    public float Throttle { get; set; }
+
     private Rigidbody rb;
+    private Wheel[] wheels;
 
     // Start is called before the first frame update
     void Start()
     {
+        wheels = GetComponentsInChildren<Wheel>();
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = centerOfMass.localPosition;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
-    {
-        wheelColLeftBack.motorTorque = Input.GetAxis("Vertical") * motorTorque;
-        wheelColRightBack.motorTorque = Input.GetAxis("Vertical") * motorTorque;
-        wheelColLeftFront.steerAngle = Input.GetAxis("Horizontal") * maxSteer;
-        wheelColRightFront.steerAngle = Input.GetAxis("Horizontal") * maxSteer;
-    }
-
     void Update()
     {
-        var pos = Vector3.zero;
-        var rot = Quaternion.identity;
+        Steer = GameManager.Instance.InputController.SteerInput;
+        Throttle = GameManager.Instance.InputController.ThrottleInput;
 
-        wheelColLeftFront.GetWorldPose(out pos, out rot);
-        wheelLeftFront.position = pos;
-        wheelLeftFront.rotation = rot;
-
-        wheelColLeftBack.GetWorldPose(out pos, out rot);
-        wheelLeftBack.position = pos;
-        wheelLeftBack.rotation = rot;
-
-        wheelColRightFront.GetWorldPose(out pos, out rot);
-        wheelRightFront.position = pos;
-        wheelRightFront.rotation = rot * Quaternion.Euler(0, 180, 0);
-
-        wheelColRightBack.GetWorldPose(out pos, out rot);
-        wheelRightBack.position = pos;
-        wheelRightBack.rotation = rot * Quaternion.Euler(0, 180, 0);
+        foreach (var wheel in wheels)
+        {
+            wheel.SteerAngle = Steer * maxSteer;
+            wheel.Torque = Throttle * motorTorque;
+        }
     }
 }
