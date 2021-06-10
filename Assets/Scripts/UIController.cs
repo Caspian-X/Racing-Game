@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ public class UIController : MonoBehaviour
     void Update()
     {
         UITextCurrentLap.text = $"Lap: {player.CurrentLap}";
-        UITextCurrentLapTime.text = $"Current lap time: {player.CurrentLapTime}";
-        UITextBestLapTime.text = $"Best lap time: {player.BestLapTime}";
+        UITextCurrentLapTime.text = $"Current lap time: {Math.Round(player.CurrentLapTime, 3)}";
+        UITextBestLapTime.text = $"Best lap time: {Math.Round(player.BestLapTime, 3)}";
     }
 }
