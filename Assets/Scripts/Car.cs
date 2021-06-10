@@ -5,8 +5,9 @@ using UnityEngine;
 public class Car : MonoBehaviour
 {
     public Transform centerOfMass;
-    public float motorTorque = 100f;
-    public float maxSteer = 20f;
+    public float motorTorque = 1200f;
+    public float maxSteer = 40f;
+    public float maxRPM = 20000f;
 
     public float Steer { get; set; }
     public float Throttle { get; set; }
@@ -14,7 +15,6 @@ public class Car : MonoBehaviour
     private Rigidbody rb;
     private Wheel[] wheels;
 
-    // Start is called before the first frame update
     void Start()
     {
         wheels = GetComponentsInChildren<Wheel>();
@@ -22,9 +22,9 @@ public class Car : MonoBehaviour
         rb.centerOfMass = centerOfMass.localPosition;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //apply power and steering
         Steer = GameManager.Instance.InputController.SteerInput;
         Throttle = GameManager.Instance.InputController.ThrottleInput;
 
@@ -32,6 +32,13 @@ public class Car : MonoBehaviour
         {
             wheel.SteerAngle = Steer * maxSteer;
             wheel.Torque = Throttle * motorTorque;
+        }
+
+        //set the max speed
+        foreach (var wheel in wheels)
+        {
+            if (wheel.GetComponent<WheelCollider>().rpm > maxRPM)
+                wheel.Torque = 0;
         }
     }
 }
