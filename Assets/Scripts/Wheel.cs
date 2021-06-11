@@ -14,14 +14,12 @@ public class Wheel : MonoBehaviour
     private WheelCollider wheelCollider;
     private Transform wheelTransform;
 
-    // Start is called before the first frame update
     void Start()
     {
         wheelCollider = GetComponentInChildren<WheelCollider>();
         wheelTransform = GetComponentInChildren<MeshRenderer>().GetComponent<Transform>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
