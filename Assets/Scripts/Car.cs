@@ -15,6 +15,7 @@ public class Car : MonoBehaviour
     private Rigidbody rb;
     private Wheel[] wheels;
     private Vector3 startingPos;
+    private Quaternion startingRot;
 
     void Awake()
     {
@@ -22,6 +23,7 @@ public class Car : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = centerOfMass.localPosition;
         startingPos = gameObject.transform.position;
+        startingRot = gameObject.transform.rotation;
     }
 
     void Update()
@@ -47,9 +49,18 @@ public class Car : MonoBehaviour
     public void Restart()
     {
         foreach (var wheel in wheels)
-            wheel.GetComponent<WheelCollider>().brakeTorque = Mathf.Infinity;
+            wheel.GetComponent<WheelCollider>().brakeTorque = float.MaxValue;
         rb.velocity = Vector3.zero;
 
+        gameObject.transform.rotation = startingRot;
         gameObject.transform.position = startingPos;
+
+        Invoke(nameof(ResetWheelBrakeTorque), 0.25f);
+    }
+
+    private void ResetWheelBrakeTorque()
+    {
+        foreach (var wheel in wheels)
+            wheel.GetComponent<WheelCollider>().brakeTorque = 0;
     }
 }
